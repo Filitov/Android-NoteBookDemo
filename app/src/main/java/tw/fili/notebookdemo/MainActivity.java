@@ -1,7 +1,10 @@
 package tw.fili.notebookdemo;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -28,8 +31,22 @@ public class MainActivity extends Activity {
         ListView mLV;
         mLV = (ListView)findViewById(R.id.fiListView);
         mLV.setAdapter(mAdapter);
+
+        //設定點選「新增」按鈕的事件處理物件
+        ImageButton btn = (ImageButton)findViewById(R.id.fiBtnAdd);
+        btn.setOnClickListener( mAdd );
     }
 
 
+    //點選「新增」時的事件處理
+    private View.OnClickListener mAdd = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            //開啟新增的介面 AddNoteActivity
+            Intent it = new Intent();
+            it.setClass( MainActivity.this, AddNoteActivity.class );
+            startActivity( it );
+        }
+    };
 
 }
