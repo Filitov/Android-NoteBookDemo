@@ -12,6 +12,8 @@ import java.util.List;
 
 public class MainActivity extends Activity {
 
+    private NoteArrayAdapter mAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,8 +26,6 @@ public class MainActivity extends Activity {
         mList.add( new FiNote("aaa","test aaa") );
         mList.add( new FiNote("bbbb","bbb test") );
 
-
-        NoteArrayAdapter mAdapter;
         mAdapter = new NoteArrayAdapter(this, R.layout.note_list_item_layout, mList);
 
         ListView mLV;
@@ -45,8 +45,34 @@ public class MainActivity extends Activity {
             //開啟新增的介面 AddNoteActivity
             Intent it = new Intent();
             it.setClass( MainActivity.this, AddNoteActivity.class );
-            startActivity( it );
+            startActivityForResult( it, 9527 );
         }
     };
 
+
+    //開啟介面的回傳資料處理
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        //「新增介面」的傳回值
+        if( requestCode==9527 ){
+            if( resultCode==Activity.RESULT_OK ){
+                //點選 OK 完成回來的
+                Bundle bundle = data.getExtras();
+                String title, detail;
+                title = bundle.getString("title");
+                detail = bundle.getString("detail");
+
+                //新增到清單中
+                FiNote note = new FiNote(title, detail);
+                mAdapter.add( note );
+            }else{
+                //點選 CANCEL 取消回來的
+                //啥事也不用做?
+            }
+        }
+
+        //如果有其他傳回值的話...
+    }
 }
