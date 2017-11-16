@@ -61,6 +61,10 @@ public class FiNote {
         ModDate = modDate;
     }
 
+    public void setModDate() {
+        ModDate = new Date();
+    }
+
     public void setModDate(String modDateStr) {
         try {
             ModDate = mSDF.parse(modDateStr);
