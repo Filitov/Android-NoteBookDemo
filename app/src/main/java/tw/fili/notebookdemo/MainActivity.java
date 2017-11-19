@@ -37,6 +37,7 @@ public class MainActivity extends Activity {
         btn.setOnClickListener( mAdd );
     }
 
+    private static final int ADDNOTE_ACTIVITY = 9527;
 
     //點選「新增」時的事件處理
     private View.OnClickListener mAdd = new View.OnClickListener() {
@@ -45,7 +46,7 @@ public class MainActivity extends Activity {
             //開啟新增的介面 AddNoteActivity
             Intent it = new Intent();
             it.setClass( MainActivity.this, AddNoteActivity.class );
-            startActivityForResult( it, 9527 );
+            startActivityForResult( it, ADDNOTE_ACTIVITY );
         }
     };
 
@@ -56,7 +57,7 @@ public class MainActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
 
         //「新增介面」的傳回值
-        if( requestCode==9527 ){
+        if( requestCode==ADDNOTE_ACTIVITY ){
             if( resultCode==Activity.RESULT_OK ){
                 //點選 OK 完成回來的
                 Bundle bundle = data.getExtras();
