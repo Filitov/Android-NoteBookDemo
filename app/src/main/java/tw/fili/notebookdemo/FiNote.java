@@ -7,7 +7,7 @@ import java.util.Locale;
 
 public class FiNote {
     //轉換日期到字串
-    private static final SimpleDateFormat mSDF = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss", Locale.getDefault());
+    public static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
 
     //標題、內容、日期
     private String Title, Detail;
@@ -29,6 +29,16 @@ public class FiNote {
         this(title, detail, new Date());
     }
 
+    FiNote(String title, String detail, String datestr){
+        Title = title;
+        Detail = detail;
+        try {
+            ModDate = SDF.parse(datestr);
+        } catch (ParseException e) {
+            ModDate = new Date();
+        }
+    }
+
     // access-----------------------------------------------------------------
 
     public String getTitle() {
@@ -44,7 +54,7 @@ public class FiNote {
     }
 
     public String getModDateString() {
-        return mSDF.format(ModDate);
+        return SDF.format(ModDate);
     }
 
     // access-----------------------------------------------------------------
@@ -67,7 +77,7 @@ public class FiNote {
 
     public void setModDate(String modDateStr) {
         try {
-            ModDate = mSDF.parse(modDateStr);
+            ModDate = SDF.parse(modDateStr);
         } catch (ParseException e) {
             //e.printStackTrace();
         }

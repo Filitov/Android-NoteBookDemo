@@ -9,12 +9,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ListView;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends Activity {
-
     SQLiteDatabase mDB;
 
     private NoteArrayAdapter mAdapter;
@@ -24,12 +22,23 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mDB = new FiDBHelper(this).getWritableDatabase();
+
         List<FiNote> mList;
         mList = new ArrayList<>();
 
-        //測試資料
-        mList.add( new FiNote("aaa","test aaa") );
-        mList.add( new FiNote("bbbb","bbb test") );
+        //查詢目前所有清單
+        Cursor rr = mDB.query("finote", null, null, null, null, null, null, null);
+        while( rr.moveToNext() ){
+            String title, detail, moddate;
+            title = rr.getString(0);
+            detail = rr.getString(1);
+            moddate = rr.getString(2);
+            //將資料庫查得的資料加到清單中
+            mList.add( new FiNote(title,detail,moddate) );
+
+        }
+        rr.close();
 
         mAdapter = new NoteArrayAdapter(this, R.layout.note_list_item_layout, mList);
 
@@ -40,50 +49,6 @@ public class MainActivity extends Activity {
         //設定點選「新增」按鈕的事件處理物件
         ImageButton btn = (ImageButton)findViewById(R.id.fiBtnAdd);
         btn.setOnClickListener( mAdd );
-
-        mDB = new FiDBHelper(this).getWritableDatabase();
-
-        //查詢目前所有清單
-        Cursor rr = mDB.query("finote", null, null, null, null, null, null, null);
-        //Cursor rr = mDB.query("finote", new String[]{"title","detail","moddate","rowid"}, null, null, null, null, null, null);
-        while( rr.moveToNext() ){
-
-            String title, detail, datestr;
-            title = rr.getString(0);
-            detail = rr.getString(1);
-            datestr = rr.getString(2);
-            //title   = rr.getString( rr.getColumnIndex("title")  );
-            //detail  = rr.getString( rr.getColumnIndex("detail") );
-            //datestr = rr.getString( rr.getColumnIndex("moddate"));
-            //id      = rr.getString( rr.getColumnIndex("rowid")  );
-
-
-        }
-        rr.close();
-
-
-        //加入一筆資料
-        ContentValues cv = new ContentValues();
-        cv.put( "title", "標題xx" );
-        cv.put( "detail", "內容xx" );
-        cv.put( "moddate", "2017-11-04 10:11:12" );
-        mDB.insert("finote", null, cv);
-        //mDB.insert("finote", "不在上面的欄位名稱", cv);
-
-
-        //刪除一筆資料
-        int del_cnt;
-        del_cnt = mDB.delete("finote", "title=?", new String[]{"標題1"} );
-
-        //更新
-        ContentValues cv2 = new ContentValues();
-        cv2.put( "title", "標題yy" );
-        cv2.put( "detail", "內容yy" );
-        cv2.put( "moddate", "2017-11-05 13:14:15" );
-        int update_cnt;
-        update_cnt = mDB.update("finote", cv2, "title=?", new String[]{"標題參"});
-
-        //
     }
 
 
@@ -110,12 +75,19 @@ public class MainActivity extends Activity {
                 //點選 OK 完成回來的
                 Bundle bundle = data.getExtras();
                 String title, detail;
-                title = bundle.getString("title");
-                detail = bundle.getString("detail");
+                title = bundle.getString("title", "no name");
+                detail = bundle.getString("detail", "no detail");
 
                 //新增到清單中
                 FiNote note = new FiNote(title, detail);
                 mAdapter.add( note );
+
+                //加入一筆資料
+                ContentValues cv = new ContentValues();
+                cv.put( "title", note.getTitle() );
+                cv.put( "detail", note.getDetail() );
+                cv.put( "moddate", note.getModDateString() );
+                mDB.insert("finote", null, cv);
             }else{
                 //點選 CANCEL 取消回來的
                 //啥事也不用做?
